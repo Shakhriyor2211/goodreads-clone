@@ -1,12 +1,31 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
+
+from users.forms import UserCreateForm
 
 
 class RegisterView(View):
 
     def get(self, request):
-        return render(request, 'users/register.html')
+        create_form = UserCreateForm()
+        context = {
+            "form": create_form
+        }
 
+        return render(request, 'users/register.html', context)
+
+    def post(self, request):
+        create_user = UserCreateForm(data=request.POST)
+
+        if create_user.is_valid():
+            create_user.save()
+            return redirect("users:login")
+
+        else:
+            context = {
+                "form": create_user
+            }
+            return render(request, "users/register.html", context)
 
 
 class LoginView(View):
