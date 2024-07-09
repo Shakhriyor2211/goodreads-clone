@@ -4,7 +4,8 @@ from books.models import Book, Author, BookAuthor, BookReview
 
 
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'isbn')
+    list_display = ('id', 'title', 'isbn', "slug")
+    exclude = ("slug",)
     search_fields = ('title', 'isbn')
 
 class AuthorAdmin(admin.ModelAdmin):

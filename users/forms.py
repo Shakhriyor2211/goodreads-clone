@@ -12,3 +12,4 @@ class UserCreateForm(forms.ModelForm):
         user = super().save(commit)
         user.set_password(self.cleaned_data["password"])
         user.save()
+
