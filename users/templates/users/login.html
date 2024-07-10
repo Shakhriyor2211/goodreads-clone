@@ -1,9 +1,15 @@
-{% extends "base.html" %}
-
-{% block content %}
-    <h1>Login page</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+   <h1>Login page</h1>
     <form method="post">{% csrf_token %}
         {{ login_form.as_p }}
         <input type="submit"/>
     </form>
-{% endblock content %}
+</body>
+</html>

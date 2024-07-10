@@ -1,8 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.utils import timezone
-from django.utils.text import slugify
+from django.urls import reverse
 
 from books.utils import generate_unique_slug
 
@@ -10,15 +9,23 @@ from books.utils import generate_unique_slug
 class Book(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    isbn = models.CharField(max_length=17)
+    isbn = models.CharField(max_length=17, unique=True)
     slug = models.SlugField(unique=True)
-    create_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(self, self.title)
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("books:book_detail", args=[
+            self.created_time.year,
+            self.created_time.month,
+            self.created_time.day,
+            self.slug,
+        ])
 
     def __str__(self):
         return self.title
@@ -32,7 +39,6 @@ class Author(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
 
 
 class BookAuthor(models.Model):

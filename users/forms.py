@@ -13,3 +13,10 @@ class UserCreateForm(forms.ModelForm):
         user.set_password(self.cleaned_data["password"])
         user.save()
 
+
+
+class UserUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ("username", "first_name", "last_name", "email")

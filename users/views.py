@@ -1,9 +1,12 @@
-from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views import View
 
-from users.forms import UserCreateForm
+from users.forms import UserCreateForm, UserUpdateForm
 
 
 class RegisterView(View):
@@ -42,7 +45,49 @@ class LoginView(View):
         if login_form.is_valid():
             user = login_form.get_user()
             login(request, user)
-            return redirect("landing")
+            messages.success(request, "You logged in successfully!")
+            return redirect("books:books_list")
 
         else:
             return render(request, "users/login.html", {"login_form": login_form})
+
+
+class ProfileView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        return render(request, "users/profile.html", {"user": request.user})
+
+
+
+class LogoutView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        logout(request)
+        messages.info(request, "You logged out!")
+        return redirect("landing")
+
+
+
+class UpdateProfileView(View):
+
+    def get(self, request):
+        user_form = UserUpdateForm(instance=request.user)
+        return render(request, "users/update_profile.html", {"form": user_form})
+
+    def post(self, request):
+        user_form = UserUpdateForm(instance=request.user, data=request.POST)
+
+        if user_form.is_valid():
+            user_form.save()
+            messages.success(request, "Your profile updated successfully")
+            return redirect("users:profile")
+
+        else:
+            return render(request, "users/update_profile.html", {"form": user_form})
+
+
+
+
+
+
+
