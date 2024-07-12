@@ -1,4 +1,6 @@
-from django.contrib.auth.models import User
+from django.utils import timezone
+
+from users.models import CustomUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse
@@ -9,8 +11,9 @@ from books.utils import generate_unique_slug
 class Book(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    isbn = models.CharField(max_length=17, unique=True)
-    slug = models.SlugField(unique=True)
+    cover_picture = models.ImageField(default="default_book_cover.png")
+    isbn = models.CharField(max_length=17, unique=True, blank=True, null=True)
+    slug = models.SlugField(max_length=100, unique=True)
     created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
 
@@ -50,10 +53,10 @@ class BookAuthor(models.Model):
 
 
 class BookReview(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     comment = models.TextField()
     stars_given = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-
+    created_time = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return f"{self.stars_given} stars for {self.book} {self.user.username}"

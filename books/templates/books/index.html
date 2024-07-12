@@ -1,14 +1,70 @@
 {% extends "base.html" %}
 {% block title %}Books{% endblock title %}
 {% block content %}
+
+    <div class="flex justify-end mb-8">
+    <form method="get"
+          class="bg-white flex px-4 py-3 border-b border-gray-300 focus-within:border-blue-500 overflow-hidden w-72 font-[sans-serif]">
+        <button type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="18px"
+                 class="fill-gray-400 mr-3">
+                <path
+                        d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z">
+                </path>
+            </svg>
+        </button>
+        <input type="text" value="{{ search_query }}" placeholder="Search..." name="q" class="w-full outline-none text-sm"/>
+    </form>
+    </div>
+    <h1 class="text-2xl mt-12 font-semibold">Books</h1>
     {% if books %}
-        <ul>
-            {% for book in books %}
-                <li>
-                    <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
-                </li>
+        <div class="grid mt-6 grid-cols-5 gap-8">
+            {% for book in books.object_list %}
+                <a class="rounded" href="{{ book.get_absolute_url }}">
+                    <img class="rounded-lg w-full h-72 object-fit" src="{{ book.cover_picture.url }}" alt="book cover"/>
+                    <p class="text-center p-2 truncate">{{ book.title }}</p>
+                </a>
             {% endfor %}
-        </ul>
+        </div>
+
+        <div class="flex items-center gap-x-1 mt-8">
+            {% if books.has_previous %}
+                <a href="?page={{ books.previous_page_number }}"
+                   class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
+                   disabled="">
+                    <svg class="flex-shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"></path>
+                    </svg>
+                    <span>Previous</span>
+                </a>
+            {% endif %}
+
+            <div class="flex items-center gap-x-1">
+                {% for page_number in books.paginator.page_range %}
+                    <a href="?page={{ page_number }}"
+                       class="{% if page_number == books.number %}bg-gray-200{% endif %} min-h-[38px] min-w-[38px] flex justify-center items-center text-gray-800 py-2 px-3 text-sm rounded-lg focus:outline-none hover:bg-gray-300 disabled:opacity-50 disabled:pointer-events-none"
+                       aria-current="page">
+                        {{ page_number }}
+                    </a>
+                {% endfor %}
+
+            </div>
+
+            {% if books.has_next %}
+                <a href="?page={{ books.next_page_number }}"
+                   class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none">
+                    <span>Next</span>
+                    <svg class="flex-shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="m9 18 6-6-6-6"></path>
+                    </svg>
+                </a>
+            {% endif %}
+        </div>
+        <!-- End Pagination -->
     {% else %}
         <p>No books found.</p>
     {% endif %}

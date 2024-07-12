@@ -75,7 +75,7 @@ class UpdateProfileView(View):
         return render(request, "users/update_profile.html", {"form": user_form})
 
     def post(self, request):
-        user_form = UserUpdateForm(instance=request.user, data=request.POST)
+        user_form = UserUpdateForm(instance=request.user, data=request.POST, files=request.FILES)
 
         if user_form.is_valid():
             user_form.save()

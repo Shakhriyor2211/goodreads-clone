@@ -1,6 +1,30 @@
 {% extends "base.html" %}
 {% block title %}Book detail{% endblock title %}
 {% block content %}
-    <h1>{{ book.title }}</h1>
-    <p>{{ book.description }}</p>
+    <div class="flex gap-4 my-8">
+        <img class="rounded-lg min-w-[372px] h-[500px] object-fit" src="{{ book.cover_picture.url }}" alt="book cover"/>
+        <div>
+            <h1 class="text-xl font-semibold">{{ book.title }}</h1>
+            <p>{{ book.description }}</p>
+        </div>
+    </div>
+
+    <div class="space-y-8">
+        {% for review in book.bookreview_set.all %}
+            <div class="flex py-4 gap-4">
+                <img class="w-48 h-40 shrink-0 object-fill" src="{{ review.user.profile_picture.url }}"
+                     alt="user-image"/>
+                <div class="space-y-2">
+                    <p>
+                        <span class="font-semibold">{{ request.user.username }}</span>
+                        <span>&nbsp; rated it {{ review.stars_given }} star(s)</span>
+                        <span class="text-gray-400">&nbsp;{{ review.created_time }}</span>
+                    </p>
+                    <p class="font-mono text-sm">
+                        {{ review.comment }}
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock content %}

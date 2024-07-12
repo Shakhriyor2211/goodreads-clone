@@ -29,10 +29,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    "crispy_forms",
+    "crispy_tailwind",
 
     'books',
     'users',
 ]
+
+
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
+
+CRISPY_TEMPLATE_PACK = "tailwind"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -109,6 +117,12 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+AUTH_USER_MODEL = "users.CustomUser"
+
+
+MEDIA_ROOT = "media-files"
+MEDIA_URL = "/media/"
 
 
 # Static files (CSS, JavaScript, Images)

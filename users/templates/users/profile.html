@@ -1,8 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Profile{% endblock title %}
 {% block content %}
-    <p>Username: {{ user.username }}</p>
-    <p>Email: {{ user.email }}</p>
-    <p>First_name: {{ user.first_name }}</p>
-    <p>Last_name: {{ user.last_name }}</p>
+    <div class="flex flex-col my-12 items-center justify-center">
+        <h1 class="text-2xl mb-4 font-semibold">Profile</h1>
+        <div class="space-y-4 text-center">
+            <img class="w-64 h-72 rounded-xl object-cover" src="{{ user.profile_picture.url }}" alt="profile picture"/>
+            <div class="space-y-2">
+                <p class="font-semibold"> {{ user.first_name }} {{ user.last_name }}</p>
+                <p class="font-semibold">@{{ user.username }}</p>
+                <a class="rounded inline-block px-4 py-2 bg-slate-800 text-white"
+                   href="{% url "users:update_profile" %}">Edit profile</a>
+                <p class="font-semibold">{{ user.email }}</p>
+            </div>
+        </div>
+    </div>
+
 {% endblock content %}
