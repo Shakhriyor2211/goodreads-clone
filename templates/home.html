@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+    <h1 class="text-2xl font-semibold">All reviews</h1>
+    {% if page_obj %}
+        <div class="grid mt-6 grid-cols-3 gap-8">
+            {% for review in page_obj.object_list %}
+                <div class="flex flex-col justify-start w-full h-full p-8 bg-gray-100 dark:bg-gray-800 rounded-2xl dark:bg-trueGray-800">
+                    <div class="flex items-center mb-8 space-x-3">
+                        <img class="flex-shrink-0 object-cover overflow-hidden rounded-full w-14 h-14" alt="profile picture"
+                             src="{{ review.user.profile_picture.url }}"
+                             loading="lazy"/>
+                        <div>
+                            <div class="text-lg font-medium text-indigo-500">{{ review.user.username }}</div>
+                            <div class="text-gray-600 dark:text-gray-400 text-sm">{{ review.created_time | date:"M d, Y" }}</div>
+                        </div>
+                    </div>
+                    <p>
+                        {{ review.comment | truncatewords:60 }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="flex items-center gap-x-1 mt-8">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}"
+                   class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
+                   disabled="">
+                    <svg class="flex-shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"></path>
+                    </svg>
+                    <span>Previous</span>
+                </a>
+            {% endif %}
+
+            <div class="flex items-center gap-x-1">
+
+                {% for page_number in page_obj.paginator.page_range %}
+                    <a href="?page={{ page_number }}"
+                       class="{% if page_number == page_obj.number %}bg-gray-200{% endif %} min-h-[38px] min-w-[38px] flex justify-center items-center text-gray-800 py-2 px-3 text-sm rounded-lg focus:outline-none hover:bg-gray-300 disabled:opacity-50 disabled:pointer-events-none"
+                       aria-current="page">
+                        {{ page_number }}
+                    </a>
+                {% endfor %}
+
+            </div>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}"
+                   class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none">
+                    <span>Next</span>
+                    <svg class="flex-shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="m9 18 6-6-6-6"></path>
+                    </svg>
+                </a>
+            {% endif %}
+        </div>
+        <!-- End Pagination -->
+    {% else %}
+        <p>No reviews found.</p>
+    {% endif %}
+{% endblock content %}
