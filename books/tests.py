@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from books.models import Book
+from books.models import Book, BookAuthor, Author
 
 
 class BookTestCase(TestCase):
@@ -30,6 +30,10 @@ class BookTestCase(TestCase):
 
     def test_detail(self):
         book = Book.objects.create(title="Book1", description="Description1", isbn="122211")
+        author = Author.objects.create(first_name="John", last_name="Doe")
+        BookAuthor.objects.create(book=book, author=author)
+
+
 
         res = self.client.get(reverse("books:book_detail", args=[
             book.created_time.year,
@@ -47,6 +51,9 @@ class BookTestCase(TestCase):
 
         self.assertContains(res, book.title)
         self.assertContains(res, book.description)
+
+        for book_author in book.bookauthor_set.all():
+            self.assertContains(res, book_author.author.full_name())
 
     def test_book_search(self):
         Book.objects.create(title="Sport", description="Description1", isbn="122211")

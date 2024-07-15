@@ -1,10 +1,12 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+from django.urls import reverse
 from django.views.generic import ListView, DetailView
 
-from books.models import Book
+from books.forms import AddReviewForm
+from books.models import Book, BookReview
 
 
 # class BooksView(ListView):
@@ -39,4 +41,23 @@ class BooksView(View):
 
 class BookDetailView(View):
     def get(self, request, **kwargs):
-        return render(request, "books/details.html", {"book": get_object_or_404(Book, slug=kwargs["slug"], created_time__year=kwargs["year"], created_time__month=kwargs["month"], created_time__day=kwargs["day"])})
+        book = get_object_or_404(Book, slug=kwargs["slug"], created_time__year=kwargs["year"],
+                                 created_time__month=kwargs["month"], created_time__day=kwargs["day"])
+        review_form = AddReviewForm()
+        return render(request, "books/details.html", {"book": book, "review_form": review_form})
+
+    def post(self, request, **kwargs):
+        review_form = AddReviewForm(data=request.POST)
+        book = Book.objects.get(slug=kwargs["slug"])
+        if review_form.is_valid():
+            BookReview.objects.create(user=request.user, book=book, comment=review_form.cleaned_data["comment"],
+                                stars_given=review_form.cleaned_data["stars_given"])
+
+            return redirect(book.get_absolute_url())
+            # return redirect(reverse("books:book_detail", kwargs={
+            #     "slug": book.slug,
+            #     "year": book.created_time.year,
+            #     "month": book.created_time.month,
+            #     "day": book.created_time.day
+            # }))
+        return render(request, "books/details.html", {"book": book, "review_form": review_form})

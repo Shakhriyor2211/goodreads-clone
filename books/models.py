@@ -37,9 +37,12 @@ class Book(models.Model):
 class Author(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    email = models.EmailField()
-    bio = models.TextField()
+    email = models.EmailField(blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
 
+
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -56,7 +59,7 @@ class BookReview(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     comment = models.TextField()
-    stars_given = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    stars_given = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=0)
     created_time = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return f"{self.stars_given} stars for {self.book} {self.user.username}"
